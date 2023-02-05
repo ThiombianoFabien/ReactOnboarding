@@ -35,9 +35,12 @@ export default class App extends Component {
 
   createNewTodo = (task) => {
     if (!this.state.todoItems.find((item) => item.action === task.action)) {
-      this.setState({
-        todoItems: [...this.state.todoItems, { action: task, done: false }],
-      });
+      this.setState(
+        {
+          todoItems: [...this.state.todoItems, { action: task, done: false }],
+        },
+        () => localStorage.setItem("todos", JSON.stringify(this.state))
+      );
     }
   };
 
@@ -65,6 +68,24 @@ export default class App extends Component {
   // todoTableRows = () => this.state.todoItems.map((item) => <TodoRow key={item.action} item={item} callback={this.toggleTodo}></TodoRow>);
 
   todoTableRows = (doneValue) => this.state.todoItems.filter((item) => item.done === doneValue).map((item) => <TodoRow key={item.action} item={item} callback={this.toggleTodo}></TodoRow>);
+
+  componentDidMount = () => {
+    let data = localStorage.getItem("todos");
+    this.setState(
+      data != null
+        ? JSON.parse(data)
+        : {
+            userName: "Adam",
+            todoItems: [
+              { action: "Buy Flowers", done: false },
+              { action: "Get Shoes", done: false },
+              { action: "Collect Tickets", done: true },
+              { action: "Call Joe", done: false },
+            ],
+            showCompleted: true,
+          }
+    );
+  };
 
   render = () => (
     <div>
